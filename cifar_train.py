@@ -9,6 +9,7 @@ import numpy as np
 import argparse
 import logging
 import os
+import sys
 
 
 
@@ -22,9 +23,12 @@ tf.random.set_seed(SEED)
 
 # Setup Logger
 logger = logging.getLogger('sagemaker')
-logger.setLevel(logging.INFO)
+# logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler())
 
+# logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler(sys.stdout))
 
 def parse_args():
     parser = argparse.ArgumentParser() 
@@ -121,7 +125,9 @@ if __name__ == '__main__':
         
         # Evaluate on Test Set
         result = model.evaluate(X_test, y_test, verbose=1)
-        print(f'Test Accuracy: {result[1]}')
+        logger.info(f'Test Accuracy: {result[1]}')
+        loss = 1-int(result[1])
+        logger.info(f'loss : {loss}')
         
         # Save Model
         model.save(f'{args.model_dir}/1')
